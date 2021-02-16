@@ -2,9 +2,9 @@
 
 clone the project
 
-npm install
+inside project root folder:
 
-on root folder:
+npm install
 
 node scraper *url* *path*
 
