@@ -79,9 +79,57 @@ function formatImages(imgs){
 }
 
 function buildHtml(imgs,imgsUrl) {
-    var header = '';
+    var header = `
+    <style>
+        h1 { 
+            margin: 15px;
+        }
+        .margin-top{
+            margin-top: 10px;
+        }
+        .item-container {
+            display:flex; 
+            margin: 15px;     
+            border: 2px black solid;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 95%;
+        }
+        .image-container {
+            min-width:130px; 
+            display:flex; 
+            align-items:center; 
+            justify-content:center;
+        }
+        .text-container{
+            margin-left: 10px; 
+            max-width: 90%; 
+            display:flex; 
+            flex-direction:column; 
+            justify-content:center;
+        }
+        .long-text{
+            overflow: hidden;
+            padding-right: 80px;
+            white-space: nowrap;
+            text-overflow: ellipsis
+        }
+        @media screen and (max-width: 550px) {
+            .item-container{
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            .text-container{
+                margin-top: 10px;
+            }
+            .long-text{
+                padding-right: 0;
+            }
+          }
+    </style>`;
     var body = '';
-    body+= '<h1 style="margin: 15px">Downloaded Images</h1>'
+    body+= '<h1>Downloaded Images</h1>'
     imgs.map((img,i)=>{
         let imgName = img.path.replace(/^.*[\\\/]/, '')
         let imgFormat = img.path.split('.').pop();
@@ -90,33 +138,22 @@ function buildHtml(imgs,imgsUrl) {
             dimensions = sizeOf(img.path);
         }
         catch (error) {
-            console.error(error);
+            console.error('error retriving size of image',img.path);
+            dimensions = {width: 'error getting width', height: 'error getting height'}
         }
 
 
         body+=`
-            <div style="
-                display:flex; 
-                margin: 15px;     
-                border: 2px black solid;
-                padding: 10px;
-                border-radius: 5px;
-                max-width: 95%;
-                ">
-                <div style="min-width:130px; display:flex; align-items:center; justify-content:center">
+            <div class="item-container">
+                <div class="image-container">
                     <img src="${imgName}" style="max-width:120px;">
                 </div>
-                <div style="margin-left: 10px; max-width: 90%; display:flex; flex-direction:column; justify-content:center">
-                    <div>original url: </div>
-                    <div style="    
-                        overflow: hidden;
-                        padding-right: 80px;
-                        white-space: nowrap;
-                        text-overflow: ellipsis"
-                    >${validUrl.isWebUri(imgsUrl[i]) ? imgsUrl[i] : url + imgsUrl[i]}</div>
-                    <div>width: ${dimensions.width}</div>
-                    <div>height: ${dimensions.height}</div>
-                    <div>format: ${imgFormat}</div>
+                <div class="text-container">
+                    <div class="margin-top">original url: </div>
+                    <div class="long-text">${validUrl.isWebUri(imgsUrl[i]) ? imgsUrl[i] : url + imgsUrl[i]}</div>
+                    <div class="margin-top">width: ${dimensions.width}</div>
+                    <div class="margin-top">height: ${dimensions.height}</div>
+                    <div class="margin-top">format: ${imgFormat}</div>
                 </div>
             </div>`
     })
